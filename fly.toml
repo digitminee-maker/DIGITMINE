@@ -1,35 +1,40 @@
-app = "vault-digital-lux"
-primary_region = "fra"
+# fly.toml app configuration file generated for digitminee-app on 2026-06-20T12:44:20+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'digitminee-app'
+primary_region = 'iad'
 
 [build]
-  dockerfile = "Dockerfile"
-  [build.args]
-    VITE_SUPABASE_URL = "https://jhvcuvblvtjncatmsczb.supabase.co"
-    VITE_SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpodmN1dmJsdnRqbmNhdG1zY3piIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MjE1NzYsImV4cCI6MjA5NzI5NzU3Nn0.OCrQsmtCKxKcCPa5qzCdWTnHLGLR5cLvS89n6uS4OjY"
-    VITE_SUPABASE_PROJECT_ID = "jhvcuvblvtjncatmsczb"
-    VITE_USE_REAL_SUPABASE = "true"
-
-[env]
-  NODE_ENV = "production"
-  PORT = "3000"
+  dockerfile = 'Dockerfile'
+  args = {
+    VITE_SUPABASE_URL = "${VITE_SUPABASE_URL}",
+    VITE_SUPABASE_ANON_KEY = "${VITE_SUPABASE_ANON_KEY}",
+    VITE_SUPABASE_PROJECT_ID = "${VITE_SUPABASE_PROJECT_ID}",
+    VITE_USE_REAL_SUPABASE = "${VITE_USE_REAL_SUPABASE}",
+    SUPABASE_URL = "${SUPABASE_URL}",
+    SUPABASE_PUBLISHABLE_KEY = "${SUPABASE_PUBLISHABLE_KEY}"
+  }
 
 [[services]]
-  protocol = "tcp"
+  protocol = 'tcp'
   internal_port = 3000
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 1
 
   [[services.ports]]
     port = 80
-    handlers = ["http"]
+    handlers = ['http']
     force_https = true
 
   [[services.ports]]
     port = 443
-    handlers = ["tls", "http"]
+    handlers = ['tls', 'http']
 
 [[vm]]
-  memory = "512mb"
-  cpu_kind = "shared"
+  memory = '512mb'
+  cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 512
