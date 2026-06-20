@@ -1,4 +1,106 @@
 import { useQuery } from "@tanstack/react-query";
+
+// ------------------------------------------------------------
+// Mock product data for front‑end testing (enabled when VITE_USE_MOCK_DATA=true)
+// ------------------------------------------------------------
+const MOCK_PRODUCTS = [
+  {
+    id: "prod-1",
+    name: "منتج تجريبي 1",
+    slug: "muntaj-tajribi-1",
+    short_description: "وصف قصير للمنتج الأول",
+    description: "وصف كامل للمنتج الأول مع تفاصيل الغرض والفوائد.",
+    main_image: "https://via.placeholder.com/400x300?text=Product+1",
+    featured: true,
+    sales_count: 12,
+    rating: 4.5,
+    rating_count: 34,
+    created_at: new Date().toISOString(),
+    category_id: "cat-1",
+    family: "عائلة أ",
+    tags: ["Family", "Premium"],
+    account_type: "Family",
+    offer_type: "Premium",
+    visible: true,
+    categories: { name: "فئة أ" },
+    product_offers: [
+      {
+        id: "off-1",
+        name: "عرض 1",
+        original_title: null,
+        duration: null,
+        warranty: null,
+        delivery_method: null,
+        price_dzd: 1500,
+        price_usd: 10,
+        supplier: null,
+        product_url: null,
+        account_type: "Family",
+        offer_type: "Premium",
+        stock: 100,
+        sort_order: 1,
+        active: true,
+      },
+      {
+        id: "off-2",
+        name: "عرض 2",
+        original_title: null,
+        duration: null,
+        warranty: null,
+        delivery_method: null,
+        price_dzd: 1300,
+        price_usd: 9,
+        supplier: null,
+        product_url: null,
+        account_type: "Family",
+        offer_type: "Premium",
+        stock: 50,
+        sort_order: 2,
+        active: true,
+      },
+    ],
+  },
+  {
+    id: "prod-2",
+    name: "منتج تجريبي 2",
+    slug: "muntaj-tajribi-2",
+    short_description: "وصف قصير للمنتج الثاني",
+    description: "وصف كامل للمنتج الثاني مع تفاصيل إضافية.",
+    main_image: "https://via.placeholder.com/400x300?text=Product+2",
+    featured: false,
+    sales_count: 5,
+    rating: 4.0,
+    rating_count: 12,
+    created_at: new Date().toISOString(),
+    category_id: "cat-2",
+    family: "عائلة ب",
+    tags: ["Shared"],
+    account_type: "Shared",
+    offer_type: "Standard",
+    visible: true,
+    categories: { name: "فئة ب" },
+    product_offers: [
+      {
+        id: "off-3",
+        name: "عرض 3",
+        original_title: null,
+        duration: null,
+        warranty: null,
+        delivery_method: null,
+        price_dzd: 2000,
+        price_usd: 13,
+        supplier: null,
+        product_url: null,
+        account_type: "Shared",
+        offer_type: "Standard",
+        stock: 30,
+        sort_order: 1,
+        active: true,
+      },
+    ],
+  },
+];
+
 import { supabase } from "@/integrations/supabase/client";
 
 export type CatalogOffer = {
@@ -56,6 +158,14 @@ export function lowestDzd(offers: CatalogOffer[] = []) {
 }
 
 export function useCatalogProducts() {
+  // If mock mode is enabled, return static data without contacting Supabase
+  if (import.meta.env.VITE_USE_MOCK_DATA === "true") {
+    return useQuery({
+      queryKey: ["catalog", "products", "mock"],
+      queryFn: async () => MOCK_PRODUCTS as unknown as CatalogProduct[],
+    });
+  }
+
   return useQuery({
     queryKey: ["catalog", "products"],
     queryFn: async () => {
