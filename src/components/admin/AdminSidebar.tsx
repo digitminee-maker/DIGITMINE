@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, ShoppingBag, Truck, Package, Tag, FolderTree, Ticket,
   Users, MessageSquare, CreditCard, BarChart3, ArrowLeftRight, Bell,
-  ScrollText, Settings, ShieldCheck, Menu, X,
+  ScrollText, Settings, ShieldCheck, Menu, X, Layers,
 } from "lucide-react";
 import { Logo } from "../Logo";
 
@@ -22,6 +22,7 @@ const SECTIONS = [
   {
     label: "Catalogue",
     items: [
+      { to: "/admin/families", label: "Families", icon: Layers },
       { to: "/admin/products", label: "Products", icon: Package },
       { to: "/admin/offers", label: "Offers", icon: Tag },
       { to: "/admin/categories", label: "Categories", icon: FolderTree },

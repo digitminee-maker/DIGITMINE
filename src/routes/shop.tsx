@@ -2,11 +2,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { Search, X, SlidersHorizontal, ArrowUpDown, Heart, RotateCcw, HelpCircle } from "lucide-react";
+import { Search, X, SlidersHorizontal, ArrowUpDown, Heart, RotateCcw, HelpCircle, Grid3x3, Layers } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
+import { FamilyCard } from "@/components/FamilyCard";
 import { lowestDzd, useCatalogProducts } from "@/lib/catalog-data";
+import { useFamilyCatalog } from "@/lib/family-catalog-data";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -28,9 +30,13 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const { t } = useTranslation();
   const { data: products = [], isLoading } = useCatalogProducts();
+  const { data: families = [], isLoading: familiesLoading } = useFamilyCatalog();
   const { q } = Route.useSearch();
   const navigate = useNavigate({ from: "/shop" });
   const { isAdmin } = useAuth();
+
+  // View mode: 'products' or 'families'
+  const [viewMode, setViewMode] = useState<'products' | 'families'>('families');
 
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -102,6 +108,19 @@ function ShopPage() {
       setPriceInitialized(true);
     }
   }, [products, dzdPriceBounds, priceInitialized]);
+
+  // Filter families by search query
+  const filteredFamilies = useMemo(() => {
+    if (!q.trim()) return families;
+    const needle = q.toLowerCase().trim();
+    return families.filter(f => 
+      f.family.toLowerCase().includes(needle) ||
+      f.products.some(p => 
+        p.name.toLowerCase().includes(needle) ||
+        (p.description ?? "").toLowerCase().includes(needle)
+      )
+    );
+  }, [families, q]);
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
@@ -470,7 +489,43 @@ function ShopPage() {
               </div>
             )}
 
-            {!isLoading && filteredProducts.length > 0 && (
+            {/* View mode toggle */}
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={() => setViewMode('families')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-xs transition-all ${
+                  viewMode === 'families'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'border border-border/40 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                العائلات
+              </button>
+              <button
+                onClick={() => setViewMode('products')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-xs transition-all ${
+                  viewMode === 'products'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'border border-border/40 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Grid3x3 className="w-4 h-4" />
+                المنتجات
+              </button>
+            </div>
+
+            {/* Family View */}
+            {viewMode === 'families' && !familiesLoading && filteredFamilies.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredFamilies.map((family) => (
+                  <FamilyCard key={family.family} family={family} />
+                ))}
+              </div>
+            )}
+
+            {/* Product View */}
+            {viewMode === 'products' && !isLoading && filteredProducts.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredProducts.map((p) => (
                   <ProductCard
@@ -485,6 +540,31 @@ function ShopPage() {
                     offerType={p.offer_type}
                   />
                 ))}
+              </div>
+            )}
+
+            {/* Loading state for families */}
+            {viewMode === 'families' && familiesLoading && (
+              <div className="py-24 text-center">
+                <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                <p className="text-muted-foreground font-mono text-xs">{t("Loading families…")}</p>
+              </div>
+            )}
+
+            {/* No results for families */}
+            {viewMode === 'families' && !familiesLoading && filteredFamilies.length === 0 && (
+              <div className="border border-border/30 bg-surface/10 rounded-xl p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto">
+                <HelpCircle className="w-12 h-12 text-muted-foreground/50 mb-4" />
+                <h3 className="font-display text-lg font-semibold mb-2">{t("No matches found")}</h3>
+                <p className="text-muted-foreground font-mono text-xs mb-6">
+                  {t("Try clearing search or adjusting your filters bounds.")}
+                </p>
+                <button
+                  onClick={handleResetFilters}
+                  className="font-mono-label px-4 py-2 border border-primary text-primary hover:bg-primary/10 rounded transition-colors"
+                >
+                  {t("Reset Filters")}
+                </button>
               </div>
             )}
           </div>
