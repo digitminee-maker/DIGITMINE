@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as LinkTelegramRouteImport } from './routes/link-telegram'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as CategoriesRouteImport } from './routes/categories'
@@ -27,6 +26,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminOffersRouteImport } from './routes/admin.offers'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminFamiliesRouteImport } from './routes/admin.families'
 import { Route as AdminExchangeRateRouteImport } from './routes/admin.exchange-rate'
 import { Route as AdminDeliveryRouteImport } from './routes/admin.delivery'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
@@ -56,11 +56,6 @@ const ShopRoute = ShopRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LinkTelegramRoute = LinkTelegramRouteImport.update({
-  id: '/link-telegram',
-  path: '/link-telegram',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -131,6 +126,11 @@ const AdminOffersRoute = AdminOffersRouteImport.update({
 const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFamiliesRoute = AdminFamiliesRouteImport.update({
+  id: '/families',
+  path: '/families',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminExchangeRateRoute = AdminExchangeRateRouteImport.update({
@@ -218,7 +218,6 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/chats': typeof ChatsRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/link-telegram': typeof LinkTelegramRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
@@ -230,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/delivery': typeof AdminDeliveryRoute
   '/admin/exchange-rate': typeof AdminExchangeRateRoute
+  '/admin/families': typeof AdminFamiliesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/offers': typeof AdminOffersRoute
   '/admin/payments': typeof AdminPaymentsRoute
@@ -252,7 +252,6 @@ export interface FileRoutesByTo {
   '/categories': typeof CategoriesRoute
   '/chats': typeof ChatsRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/link-telegram': typeof LinkTelegramRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
@@ -264,6 +263,7 @@ export interface FileRoutesByTo {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/delivery': typeof AdminDeliveryRoute
   '/admin/exchange-rate': typeof AdminExchangeRateRoute
+  '/admin/families': typeof AdminFamiliesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/offers': typeof AdminOffersRoute
   '/admin/payments': typeof AdminPaymentsRoute
@@ -288,7 +288,6 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/chats': typeof ChatsRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/link-telegram': typeof LinkTelegramRoute
   '/profile': typeof ProfileRoute
   '/shop': typeof ShopRoute
   '/support': typeof SupportRoute
@@ -300,6 +299,7 @@ export interface FileRoutesById {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/delivery': typeof AdminDeliveryRoute
   '/admin/exchange-rate': typeof AdminExchangeRateRoute
+  '/admin/families': typeof AdminFamiliesRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/offers': typeof AdminOffersRoute
   '/admin/payments': typeof AdminPaymentsRoute
@@ -325,7 +325,6 @@ export interface FileRouteTypes {
     | '/categories'
     | '/chats'
     | '/how-it-works'
-    | '/link-telegram'
     | '/profile'
     | '/shop'
     | '/support'
@@ -337,6 +336,7 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/delivery'
     | '/admin/exchange-rate'
+    | '/admin/families'
     | '/admin/notifications'
     | '/admin/offers'
     | '/admin/payments'
@@ -359,7 +359,6 @@ export interface FileRouteTypes {
     | '/categories'
     | '/chats'
     | '/how-it-works'
-    | '/link-telegram'
     | '/profile'
     | '/shop'
     | '/support'
@@ -371,6 +370,7 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/delivery'
     | '/admin/exchange-rate'
+    | '/admin/families'
     | '/admin/notifications'
     | '/admin/offers'
     | '/admin/payments'
@@ -394,7 +394,6 @@ export interface FileRouteTypes {
     | '/categories'
     | '/chats'
     | '/how-it-works'
-    | '/link-telegram'
     | '/profile'
     | '/shop'
     | '/support'
@@ -406,6 +405,7 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/delivery'
     | '/admin/exchange-rate'
+    | '/admin/families'
     | '/admin/notifications'
     | '/admin/offers'
     | '/admin/payments'
@@ -430,7 +430,6 @@ export interface RootRouteChildren {
   CategoriesRoute: typeof CategoriesRoute
   ChatsRoute: typeof ChatsRoute
   HowItWorksRoute: typeof HowItWorksRoute
-  LinkTelegramRoute: typeof LinkTelegramRoute
   ProfileRoute: typeof ProfileRoute
   ShopRoute: typeof ShopRoute
   SupportRoute: typeof SupportRoute
@@ -462,13 +461,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/link-telegram': {
-      id: '/link-telegram'
-      path: '/link-telegram'
-      fullPath: '/link-telegram'
-      preLoaderRoute: typeof LinkTelegramRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -567,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/admin/notifications'
       preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/families': {
+      id: '/admin/families'
+      path: '/families'
+      fullPath: '/admin/families'
+      preLoaderRoute: typeof AdminFamiliesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/exchange-rate': {
@@ -686,6 +685,7 @@ interface AdminRouteChildren {
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminDeliveryRoute: typeof AdminDeliveryRoute
   AdminExchangeRateRoute: typeof AdminExchangeRateRoute
+  AdminFamiliesRoute: typeof AdminFamiliesRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminOffersRoute: typeof AdminOffersRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
@@ -706,6 +706,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCustomersRoute: AdminCustomersRoute,
   AdminDeliveryRoute: AdminDeliveryRoute,
   AdminExchangeRateRoute: AdminExchangeRateRoute,
+  AdminFamiliesRoute: AdminFamiliesRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminOffersRoute: AdminOffersRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
@@ -727,7 +728,6 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesRoute: CategoriesRoute,
   ChatsRoute: ChatsRoute,
   HowItWorksRoute: HowItWorksRoute,
-  LinkTelegramRoute: LinkTelegramRoute,
   ProfileRoute: ProfileRoute,
   ShopRoute: ShopRoute,
   SupportRoute: SupportRoute,

@@ -654,6 +654,7 @@ function ProductsPage() {
   );
 })}
 
+      </main>
       {/* Z2U Import Dialog */}
       <Dialog open={z2uOpen} onOpenChange={setZ2uOpen}>
         <DialogContent className="max-w-xl">

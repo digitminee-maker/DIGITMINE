@@ -14,12 +14,13 @@ export default defineConfig({
   },
   vite: {
     server: {
+      allowedHosts: true,
       watch: {
         ignored: ["**/all_products.json"],
       },
     },
     preview: {
-      allowedHosts: ["vault-digital-lux.fly.dev", ".fly.dev"],
+      allowedHosts: true,
     },
   },
 });
